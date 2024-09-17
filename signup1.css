@@ -1,0 +1,235 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+  background: #425AF6;
+}
+
+.backbutton {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(255, 0, 0, 0.1);
+  text-decoration: none;
+  color: red;
+}
+
+.register {
+  background: url('background28.png') 100% / cover no-repeat;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.rectangle-2 {
+  border-radius: 12px;
+  border: 7px solid #E62041;
+  background: #FFFFFF;
+  padding: 20px 30px;
+  width: 100%;
+  max-width: 450px;
+  box-sizing: border-box;
+}
+
+.image-container {
+  margin-left: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.signup-image {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.5));
+  max-width: 580px;
+  border-radius: 12px;
+  position: relative;
+}
+
+.slide-button {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background-color: #E62041;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+#image-container {
+  overflow: hidden;
+  position: relative;
+}
+
+#signup-image {
+  width: 100%;
+  transition: width 0.5s ease-in-out;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.Logo1 {
+  width: 100px;
+  display: block;
+  margin: 0 auto;
+}
+
+.stacks {
+  color: #E62041;
+  font-family: 'Ethnocentric';
+  text-align: center;
+}
+
+.sub-header {
+  font-family: 'Ethnocentric';
+  color: #E62041;
+  text-align: center;
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+.container-3 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.create-your-account {
+  font-family: 'Epilogue', sans-serif;
+  font-size: 24px;
+  color: #000;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-container {
+  margin-bottom: 15px;
+}
+
+.input-container label {
+  display: block;
+  font-family: 'Epilogue', sans-serif;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.input-container input,
+.input-container select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 30px;
+  border: 1px solid #E6E1E1;
+  font-family: 'Epilogue', sans-serif;
+  font-size: 16px;
+}
+
+.show-password-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.show-password-container input {
+  margin-right: 10px;
+}
+
+.create-button {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  margin: 20px 0;
+  font-size: 20px;
+  color: white;
+  background-color: #E62041;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.create-button:hover {
+  background-color: #C51936;
+}
+
+/* Responsive styling */
+@media (max-width: 768px) {
+  .register {
+    flex-direction: column;
+  }
+
+  .rectangle-2 {
+    padding: 20px;
+  }
+
+  .image-container {
+    margin-left: 0;
+    margin-top: 20px;
+  }
+
+  .Logo1 {
+    width: 80px;
+  }
+
+  .create-your-account {
+    font-size: 20px;
+  }
+
+  .signup-image {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .input-container input,
+  .input-container select {
+    font-size: 14px;
+  }
+
+  .create-button {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .rectangle-2 {
+    padding: 15px;
+  }
+
+  .Logo1 {
+    width: 70px;
+  }
+
+  .create-your-account {
+    font-size: 18px;
+  }
+
+  .signup-image {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .input-container input,
+  .input-container select {
+    font-size: 12px;
+  }
+
+  .create-button {
+    font-size: 16px;
+  }
+}

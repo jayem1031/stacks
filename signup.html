@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Register</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="signup1.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+</head>
+<body>
+  <a href="../Login/login.html" class="backbutton">
+    <span class="material-symbols-outlined">arrow_back</span>
+  </a>
+  <div class="register">
+    <div class="rectangle-2">
+      <div class="header">
+        <img src="st_1.png" alt="Logo" class="Logo1">
+        <div class="stacks">S-TACKS</div>
+        <div class="sub-header">SOUTH TOOLS AND TRADING SERVICES</div>
+      </div>
+      <div class="container-3">
+        <span class="create-your-account">Create Your Account</span>
+      </div>
+      <div class="form-group">
+        <div class="input-container">
+          <label for="id-no">ID No.</label>
+          <input type="text" id="id-no" placeholder="ID No.">
+        </div>
+        <div class="input-container">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="Email">
+        </div>
+        <div class="input-container">
+          <label for="full-name">Full Name</label>
+          <input type="text" id="full-name" placeholder="Full Name">
+        </div>
+        <div class="input-container">
+          <label for="username">Username</label>
+          <input type="text" id="username" placeholder="Username">
+        </div>
+        <div class="input-container">
+          <label for="department">Department</label>
+          <input type="text" id="department" placeholder="Department">
+        </div>
+        <div class="input-container">
+          <label for="position">Position</label>
+          <input type="text" id="position" placeholder="Position">
+        </div>
+        <div class="input-container">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Password">
+        </div>
+        <div class="input-container">
+          <label for="confirm-password">Confirm Password</label>
+          <input type="password" id="confirm-password" placeholder="Confirm Password">
+        </div>
+        <div class="input-container">
+          <label for="user-type">User Type</label>
+          <select id="user-type">
+            <option value="Employee">Employee</option>
+            <option value="Admin">Admin</option>
+          </select>
+        </div>
+        <div class="show-password-container">
+          <input type="checkbox" id="show-password">
+          <label for="show-password">Show Password</label>
+        </div>
+        <button class="create-button" id="create-button">Create</button>
+      </div>
+    </div>
+    <div class="image-container" id="image-container">
+      <img src="production4.jpg" alt="Sign Up Image" class="signup-image" id="signup-image">
+      <button class="slide-button" id="slide-button">Slide</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAj1nHx7jynYiSH34M-BsYKJbDyN_0tkEg",
+      authDomain: "stacks-517bd.firebaseapp.com",
+      databaseURL: "https://stacks-517bd-default-rtdb.firebaseio.com",
+      projectId: "stacks-517bd",
+      storageBucket: "stacks-517bd.appspot.com",
+      messagingSenderId: "717430442156",
+      appId: "1:717430442156:web:d5febb867d4d783c65b709",
+      measurementId: "G-8WJZWSPEWW"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const database = getDatabase(app);
+
+    async function registerUser() {
+      const email = document.getElementById('email').value;
+      const fullName = document.getElementById('full-name').value;
+      const username = document.getElementById('username').value;
+      const department = document.getElementById('department').value;
+      const position = document.getElementById('position').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+      const userType = document.getElementById('user-type').value;
+      const idNo = document.getElementById('id-no').value;
+
+      // Validation
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(email)) {
+        alert("Invalid Email Address");
+        return;
+      }
+      if (!/^[a-zA-Z0-9]{1,13}$/.test(username)) {
+        alert("Username must be 13 characters or less and contain no spaces or special characters.");
+        return;
+      }
+      if (password.length > 16) {
+        alert("Password must be 16 characters or less.");
+        return;
+      }
+      if (password !== confirmPassword) {
+        alert("Passwords do not match!");
+        return;
+      }
+      if (!/^\d{6}$/.test(idNo)) {
+        alert("ID No. must be exactly 6 digits.");
+        return;
+      }
+
+      try {
+        // Create user in Firebase Auth
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // Save user data in Realtime Database
+        const userRef = ref(database, `${userType}_Account/${idNo}`);
+        await set(userRef, {
+          Email: email,
+          FullName: fullName,
+          Username: username,
+          Department: department,
+          Position: position,
+        });
+
+        alert("User created successfully!");
+
+        // Redirect to the login page after successful registration
+        window.location.href = '../Login/login.html';
+      } catch (error) {
+        console.error(error);
+        alert("Error occurred while creating user.");
+      }
+    }
+
+    document.getElementById("create-button").addEventListener("click", registerUser);
+
+    document.getElementById('show-password').addEventListener('change', function() {
+      const passwordField = document.getElementById('password');
+      const confirmPasswordField = document.getElementById('confirm-password');
+      const isChecked = this.checked;
+      passwordField.type = isChecked ? 'text' : 'password';
+      confirmPasswordField.type = isChecked ? 'text' : 'password';
+    });
+  </script>
+</body>
+</html>
