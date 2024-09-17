@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Forgot Password</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="forgot1.css" />
+  </head>
+  <body>
+    <div class="forgot-password-container">
+      <div class="forgot-password-content">
+        <div class="forgot-password-image">
+          <img src="forgot23.jpeg" alt="Forgot Password Image" />
+        </div>
+        <div class="forgot-password-form">
+          <h2>Forgot Password?</h2>
+          <p>Enter the email address associated with your account.</p>
+          <form>
+            <input type="email" placeholder="Enter Email Address" required />
+            <label for="user-role">Select Role</label>
+            <select id="user-role" required>
+              <option value="Employee">Employee</option>
+              <option value="Admin">Admin</option>
+            </select>
+            <div class="form-actions">
+              <a href="../Login/login.html" class="try-another-way">Try another way</a>
+              <button class="next-button" type="submit">Next</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, query, orderBy, getDocs, doc, updateDoc, deleteDoc, getDoc, where } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-storage.js";
+        import { getDatabase, ref as dbRef, get } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+        import { getAuth } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAj1nHx7jynYiSH34M-BsYKJbDyN_0tkEg",
+            authDomain: "stacks-517bd.firebaseapp.com",
+            databaseURL: "https://stacks-517bd-default-rtdb.firebaseio.com",
+            projectId: "stacks-517bd",
+            storageBucket: "stacks-517bd.appspot.com",
+            messagingSenderId: "717430442156",
+            appId: "1:717430442156:web:d5febb867d4d783c65b709",
+            measurementId: "G-8WJZWSPEWW"
+        };
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+// Use local emulators if running on localhost
+if (window.location.hostname === 'localhost') {
+  firebase.functions().useEmulator('localhost', 5001);
+  firebase.database().useEmulator('localhost', 9000);
+  firebase.auth().useEmulator('http://localhost:9099/');
+}
+
+// Call your Cloud Function
+const callHelloWorld = async () => {
+  try {
+    const helloWorld = firebase.functions().httpsCallable('helloWorld');
+    const result = await helloWorld();
+    console.log(result.data);
+  } catch (error) {
+    console.error('Error calling function:', error);
+  }
+};
+
+// Call the function
+callHelloWorld();
+      document.querySelector('form').addEventListener('submit', function(event) {
+  event.preventDefault();
+
+  const email = document.querySelector('input[type="email"]').value;
+  const userRole = document.getElementById('user-role').value;
+
+  if (email && userRole) {
+    // Here you can add the logic to handle the password reset request based on the user role
+    console.log('Email:', email);
+    console.log('User Role:', userRole);
+
+    // Example: Redirect to different password reset pages based on user role
+    if (userRole === 'Admin') {
+      window.location.href = 'admin-reset-password.html';
+    } else {
+      window.location.href = 'employee-reset-password.html';
+    }
+  } else {
+    alert('Please fill in all fields.');
+  }
+});
+
+    </script>
+  </body>
+</html>
