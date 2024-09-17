@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Announcement Page</title>
+        <link rel="stylesheet" href="announcementad.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    </head>
+    <body>
+        <div class="top-container">
+            <a href="announcementad.html"><img src="st_1.png" alt="Logo" class="logo"></a>
+            <h1 class="app-name">South Tools Trading Services STacks</h1>
+            <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
+        </div>
+        <div class="sidebar" id="sidebar">
+            <a href="../Announcementad/announcementad.html"><i class="fas fa-bullhorn"></i> Announcement</a>
+            <a href="../chat/chatad.html"><i class="fas fa-comments"></i> Chat</a>
+            <a href="../transaction/transaction.html"><i class="fas fa-file-upload"></i> File Upload</a>
+            <a href="../profile/profilead.html"><i class="fas fa-user"></i> Profile</a>
+            <a href="../account/account.html"><i class="fas fas fa-usert"></i> Accounts</a>
+            <a href="../attendance/attendance.html"><i class="fas fa-user"></i> attendance</a>
+            <a href="../Analytics/analytics.html"><i class="fas fa-analytics"></i> Analytics</a>
+            <a href="../Login/login.html"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+            
+            
+        </div>
+        <div class="content">
+            <div class="post-container">
+                <h1>Post an Announcement</h1>
+                <form id="postForm">
+                    <input type="text" id="postHeader" placeholder="Announcement Header" required>
+                    <textarea id="postParagraph" placeholder="Announcement Content" required></textarea>
+                    <input type="file" id="postMedia" accept="image/*,video/*" style="display:none;">
+                    <label for="postMedia" class="file-upload-button">
+                        <i class="fas fa-upload"></i> Upload Media
+                    </label>
+                    <div id="filePreview" style="display: none;">
+                        <img id="imagePreview" style="max-width: 100%; max-height: 400px; display: none;">
+                        <video id="videoPreview" controls style="max-width: 100%; max-height: 400px; display: none;"></video>
+                    </div>
+                    <button type="submit">Post</button>
+                    <p id="feedback" style="color: red; display: none;"></p> <!-- Feedback element -->
+                </form>
+            </div>
+            <div class="posts-container">
+                <h2>Admin Posts</h2>
+                <div id="posts"></div>
+            </div>
+        </div>
+
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+            import { getFirestore, collection, addDoc, query, orderBy, getDocs, doc, updateDoc, deleteDoc, getDoc, where } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+            import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-storage.js";
+            import { getDatabase, ref as dbRef, get } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+            import { getAuth } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+            import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
+
+            // Firebase configuration
+            const firebaseConfig = {
+                apiKey: "AIzaSyAj1nHx7jynYiSH34M-BsYKJbDyN_0tkEg",
+                authDomain: "stacks-517bd.firebaseapp.com",
+                databaseURL: "https://stacks-517bd-default-rtdb.firebaseio.com",
+                projectId: "stacks-517bd",
+                storageBucket: "stacks-517bd.appspot.com",
+                messagingSenderId: "717430442156",
+                appId: "1:717430442156:web:d5febb867d4d783c65b709",
+                measurementId: "G-8WJZWSPEWW"
+            };
+
+            const app = initializeApp(firebaseConfig);
+            const analytics = getAnalytics(app);
+            const db = getFirestore(app);
+            const storage = getStorage(app);
+            const realtimeDb = getDatabase(app);
+            const auth = getAuth(app);
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const menuBtn = document.getElementById('menuBtn');
+                const sidebar = document.getElementById('sidebar');
+                const content = document.querySelector('.content');
+
+                menuBtn.addEventListener('click', () => {
+                    sidebar.classList.toggle('open');
+                    content.classList.toggle('with-sidebar');
+                });
+
+                loadPosts();
+
+                const postForm = document.getElementById('postForm');
+                const postMedia = document.getElementById('postMedia');
+                const filePreview = document.getElementById('filePreview');
+                const imagePreview = document.getElementById('imagePreview');
+                const videoPreview = document.getElementById('videoPreview');
+                const feedback = document.getElementById('feedback');
+
+                postMedia.addEventListener('change', () => {
+                    const file = postMedia.files[0];
+                    if (file) {
+                        const fileURL = URL.createObjectURL(file);
+                        if (file.type.startsWith('image/')) {
+                            imagePreview.src = fileURL;
+                            imagePreview.style.display = 'block';
+                            videoPreview.style.display = 'none';
+                        } else if (file.type.startsWith('video/')) {
+                            videoPreview.src = fileURL;
+                            videoPreview.style.display = 'block';
+                            imagePreview.style.display = 'none';
+                        }
+                        filePreview.style.display = 'block';
+                    } else {
+                        filePreview.style.display = 'none';
+                    }
+                });
+
+                postForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const postHeader = document.getElementById('postHeader').value;
+                    const postParagraph = document.getElementById('postParagraph').value;
+                    let mediaUrl = '';
+
+                    // Fetch the current authenticated user
+                    const user = auth.currentUser;
+                    if (!user) {
+                        feedback.textContent = 'You must be logged in to post an announcement.';
+                        feedback.style.display = 'block';
+                        return;
+                    }
+
+                    // Fetch username from Realtime Database
+                    let username = "Admin";  // Default value
+                    const userRef = dbRef(realtimeDb, `users/${user.uid}`);
+                    try {
+                        const userSnapshot = await get(userRef);
+                        if (userSnapshot.exists()) {
+                            username = userSnapshot.val().username; // Adjust based on your data structure
+                        } else {
+                            console.warn("User not found.");
+                        }
+                    } catch (error) {
+                        console.error("Error fetching username: ", error);
+                    }
+
+                    // File upload logic
+                    if (postMedia.files[0]) {
+                        const file = postMedia.files[0];
+                        if (!['image/jpeg', 'image/png', 'video/mp4'].includes(file.type)) {
+                            feedback.textContent = 'Invalid file type. Only images and videos are allowed.';
+                            feedback.style.display = 'block';
+                            return;
+                        }
+                        if (file.size > 10 * 1024 * 1024) { // 10 MB limit
+                            feedback.textContent = 'File size exceeds 10 MB.';
+                            feedback.style.display = 'block';
+                            return;
+                        }
+
+                        const storageRef = ref(storage, `posts/${Date.now()}_${file.name}`);
+                        try {
+                            await uploadBytes(storageRef, file);
+                            mediaUrl = await getDownloadURL(storageRef);
+                        } catch (error) {
+                            console.error("Error uploading file: ", error);
+                            feedback.textContent = 'Error uploading file. Please try again.';
+                            feedback.style.display = 'block';
+                            return;
+                        }
+                    }
+
+                    const newPost = {
+                        header: postHeader,
+                        content: postParagraph,
+                        mediaUrl: mediaUrl,
+                        created_at: new Date(),
+                        updated_at: new Date(),
+                        user_id: user.uid,
+                        username: username, // Include username in the post
+                        status: "published",
+                        category_id: "announcement",
+                        userType: "admin" // Add userType field
+                    };
+
+                    try {
+                        await addDoc(collection(db, "posts"), newPost);
+                        postForm.reset();
+                        filePreview.style.display = 'none'; // Hide preview
+                        loadPosts();
+                    } catch (error) {
+                        console.error("Error adding document: ", error);
+                        feedback.textContent = 'Error posting announcement. Please try again.';
+                        feedback.style.display = 'block';
+                    }
+                });
+            });
+
+            async function loadPosts() {
+                const postsContainer = document.getElementById('posts');
+                postsContainer.innerHTML = "";
+
+                try {
+                    // Query all posts ordered by creation date in descending order
+                    const postsQuery = query(collection(db, "posts"), where("userType", "==", "admin"), orderBy("created_at", "desc"));
+                    const querySnapshot = await getDocs(postsQuery);
+
+                    querySnapshot.forEach((doc) => {
+                        const post = doc.data();
+                        const postId = doc.id;
+                        const postElement = document.createElement('div');
+                        postElement.classList.add('post');
+                        postElement.innerHTML = `
+                            <h3>${post.header}</h3>
+                            <p>${post.content}</p>
+                            ${post.mediaUrl ? (post.mediaUrl.endsWith('.mp4') ? `<video src="${post.mediaUrl}" controls style="max-width: 100%; max-height: 400px;"></video>` : `<img src="${post.mediaUrl}" alt="Post media" style="max-width: 100%; max-height: 400px;">`) : ''}
+                            <small>Posted by: ${post.username || 'Unknown'} on ${new Date(post.created_at.seconds * 1000).toLocaleString()}</small>
+                            <button class="edit-btn" data-id="${postId}">Edit</button>
+                            <button class="delete-btn" data-id="${postId}">Delete</button>
+                        `;
+                        postsContainer.appendChild(postElement);
+                    });
+
+                    document.querySelectorAll('.edit-btn').forEach(button => {
+                        button.addEventListener('click', async (e) => {
+                            const postId = e.target.dataset.id;
+                            const postRef = doc(db, "posts", postId);
+                            const postSnapshot = await getDoc(postRef);
+                            const post = postSnapshot.data();
+
+                            const newHeader = prompt("Edit your post header:", post.header);
+                            const newContent = prompt("Edit your post content:", post.content);
+                            if (newHeader !== null && newContent !== null) {
+                                await updateDoc(postRef, {
+                                    header: newHeader,
+                                    content: newContent,
+                                    updated_at: new Date()
+                                });
+                                loadPosts();
+                            }
+                        });
+                    });
+
+                    document.querySelectorAll('.delete-btn').forEach(button => {
+                        button.addEventListener('click', async (e) => {
+                            const postId = e.target.dataset.id;
+                            const postRef = doc(db, "posts", postId);
+
+                            if (confirm("Are you sure you want to delete this post?")) {
+                                await deleteDoc(postRef);
+                                loadPosts();
+                            }
+                        });
+                    });
+
+                } catch (error) {
+                    console.error("Error loading posts: ", error);
+                }
+            }
+        </script>
+    </body>
+    </html>
