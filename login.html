@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Page</title>
+  <link rel="stylesheet" href="login1.css">
+</head>
+<body>
+  <div class="login">
+    <div class="rectangle-2">
+      <div class="st-1">
+        <img src="stlogo.png.png" alt="Logo" class="Logo1">
+      </div>
+      <a class="stacks">S-TACKS</a>
+      <div class="sub-header">SOUTH TOOLS AND TRADING SERVICES</div>
+      
+      <!-- User Type Selection -->
+      <div class="container-2">
+        <select id="user-type" class="user-type">
+          <option value="admin">Admin</option>
+          <option value="employee">Employee</option>
+          
+        </select>
+      </div>
+      
+      <div class="container-3">
+        <img src="user.png" alt="Username Icon" class="icon1">
+        <input type="email" id="email" placeholder="Email" class="email" aria-label="Email">
+      </div>
+      <div class="container-4">
+        <img src="Lock.jpg" alt="Password Icon" class="icon2">
+        <input type="password" id="password" placeholder="Password" class="password" aria-label="Password">
+      </div>
+      <div class="container-5">
+        <div class="container-fluid">
+          <input type="checkbox" id="remember-me" class="rectangle-6">
+          <label for="remember-me" class="remember-me">Remember Me</label>
+        </div>
+        <a href="forgot/forgot.html" class="forgot-password">Forgot Password</a>
+      </div>
+      <button class="login-button" id="login-button" aria-label="Login">Login</button>
+      <div class="line-1"></div>
+      <div class="continue-using">Continue Using</div>
+      <div class="container-2">
+        <div class="social-icons">
+          <a href="https://www.facebook.com/" id="facebook-login" aria-label="Login with Facebook"><img src="fblo.png" alt="Facebook" class="image2"></a>
+          <a href="https://accounts.google.com/" id="google-login" aria-label="Login with Google"><img src="gmaillogo.png" alt="Google" class="image3"></a>
+        </div>
+      </div>
+      <div class="container-7">
+        <span class="dont-have-an-account">Don’t Have an Account?</span>
+        <a href="../Signup/signup.html" class="click-here">Click Here</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Modal -->
+  <div id="notification-modal" class="modal" aria-hidden="true">
+    <div class="modal-content">
+      <button class="close-button" aria-label="Close">&times;</button>
+      <p id="notification-message"></p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
+    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAj1nHx7jynYiSH34M-BsYKJbDyN_0tkEg",
+      authDomain: "stacks-517bd.firebaseapp.com",
+      databaseURL: "https://stacks-517bd-default-rtdb.firebaseio.com",
+      projectId: "stacks-517bd",
+      storageBucket: "stacks-517bd.appspot.com",
+      messagingSenderId: "717430442156",
+      appId: "1:717430442156:web:d5febb867d4d783c65b709",
+      measurementId: "G-8WJZWSPEWW"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const database = getDatabase(app);
+
+    // Redirect to the employee login page if the user type is changed to "Employee"
+    document.querySelector('.login-button').addEventListener('click', async () => {
+  const email = document.querySelector('.email').value;
+  const password = document.querySelector('.password').value;
+  const userType = document.querySelector('#user-type').value;
+
+  if (userType === 'employee') {
+    window.location.href = '../../Employee/loginem/loginem.html';
+    return;
+  }
+
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+    
+    if (userType === 'admin') {
+      // Use the provided email to search for the user in the Admin_Account
+      const adminRef = ref(database, 'Admin_Account');
+      const snapshot = await get(adminRef);
+
+      if (snapshot.exists()) {
+        let isAdmin = false;
+
+        snapshot.forEach((childSnapshot) => {
+          const adminData = childSnapshot.val();
+          // Check if the email matches
+          if (adminData.Email === email) {
+            isAdmin = true;
+            return true; // Exit the loop
+          }
+        });
+
+        if (isAdmin) {
+          window.location.href = '../transaction/transaction.html';
+        } else {
+          showNotification('User type does not match or user is not registered in the selected account type.');
+        }
+      } else {
+        showNotification('No admin accounts found in the database.');
+      }
+    } else {
+      showNotification('Please select the correct user type.');
+    }
+  } catch (error) {
+    console.error(error);
+    if (error.code === 'auth/invalid-email') {
+      showNotification('Invalid email format');
+    } else if (error.code === 'auth/user-not-found') {
+      showNotification('User not found');
+    } else if (error.code === 'auth/wrong-password') {
+      showNotification('Incorrect password');
+    } else {
+      showNotification('Error logging in');
+    }
+  }
+});
+
+    function showNotification(message) {
+      const modal = document.getElementById('notification-modal');
+      const modalMessage = document.getElementById('notification-message');
+      modalMessage.textContent = message;
+      modal.setAttribute('aria-hidden', 'false');
+      modal.style.display = 'block';
+
+      const closeButton = document.querySelector('.close-button');
+      closeButton.onclick = function() {
+        modal.style.display = 'none';
+        modal.setAttribute('aria-hidden', 'true');
+      };
+
+      window.onclick = function(event) {
+        if (event.target == modal) {
+          modal.style.display = 'none';
+          modal.setAttribute('aria-hidden', 'true');
+        }
+      };
+    }
+  </script>
+</body>
+</html>

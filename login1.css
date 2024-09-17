@@ -1,0 +1,244 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+  background: #425AF6;
+}
+
+.login {
+  background: url('background28.png') 50% / cover no-repeat;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rectangle-2 {
+  border-radius: 12px;
+  border: 7px solid #E62041;
+  background-color: #ffffff;
+  padding: 20px 30px;
+  width: 450px;
+  box-sizing: border-box;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.st-1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.stacks {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #E62041;
+  font-family: 'Ethnocentric';
+  font-size: 35px;
+  text-decoration: none;
+}
+
+.sub-header {
+  font-family: 'Ethnocentric';
+  color: #E62041;
+  text-align: center;
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+.user-type {
+  width: 100%;
+  padding: 10px 20px;
+  margin: 10px 0;
+  font-family: 'Epilogue', sans-serif;
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.5);
+  border: 1px solid #ddd;
+  border-radius: 25px;
+}
+
+/* Tooltip styles */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 200px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -100px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+.email,
+.password {
+  width: calc(100% - 40px);
+  padding: 10px 20px;
+  margin: 10px 0;
+  font-family: 'Epilogue', sans-serif;
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.5);
+  border: 1px solid #ddd;
+  border-radius: 25px;
+}
+
+.container-3,
+.container-4 {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  border: 1px solid #ddd;
+  border-radius: 30px;
+  margin-bottom: 15px;
+  background-color: #f7f7f7;
+}
+
+.icon1,
+.icon2 {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+}
+
+.container-5 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.container-fluid {
+  display: flex;
+  align-items: center;
+}
+
+.rectangle-6 {
+  border: 1px solid #E62041;
+  background: #E6E1E1;
+  width: 27px;
+  height: 27px;
+  margin-right: 10px;
+}
+
+.remember-me {
+  margin-right: 20px;
+}
+
+.forgot-password {
+  font-family: 'Epilogue', sans-serif;
+  color: #E62041;
+  text-decoration: none;
+}
+
+.login-button {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  margin: 20px 0;
+  font-size: 20px;
+  color: white;
+  background-color: #E62041;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.login-button:hover {
+  background-color: #C51936;
+}
+
+.image2 {
+  width: 55px;
+  height: 55px;
+  margin: 0 10px;
+}
+
+.image3 {
+  width: 55px;
+  height: 35px;
+  margin: 0 10px;
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 15px 0;
+}
+
+.continue-using {
+  text-align: center;
+  color: gray;
+  margin: 20px 0;
+}
+
+img.Logo1 {
+  width: 200px;
+}
+
+.container-7 {
+  text-align: center;
+}
+
+/* Modal styling */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  border-radius: 12px;
+  width: 80%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+  color: black;
+  text-decoration: none;
+}
+
+#notification-message {
+  font-family: 'Epilogue', sans-serif;
+  font-size: 16px;
+  color: #333;
+}
