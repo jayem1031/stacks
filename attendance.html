@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Attendance Page</title>
+    <link rel="stylesheet" href="attendance.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="top-container">
+        <a href="../Announcementad/announcementad.html"><img src="st_1.png" alt="Logo" class="logo"></a>
+        <h1 class="app-name">South Tools Trading Services STacks</h1>
+        <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
+    </div>
+    <aside class="sidebar" id="sidebar">
+        <a href="../Announcementad/announcementad.html"><i class="fas fa-bullhorn"></i> Announcement</a>
+        <a href="../chat/chatad.html"><i class="fas fa-comments"></i> Chat</a>
+        <a href="../transaction/transaction.html"><i class="fas fa-file-upload"></i> File Upload</a>
+        <a href="../profile/profilead.html"><i class="fas fa-user"></i> Profile</a>
+        <a href="../account/account.html"><i class="fas fas fa-usert"></i> Accounts</a>
+        <a href="../attendance/attendance.html"><i class="fas fa-user"></i> attendance</a>
+        <a href="../Analytics/analytics.html"><i class="fas fa-analytics"></i> Analytics</a>
+        <a href="../Login/login.html"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+        
+    </aside>
+    <div class="container">
+        <header>
+            <h1>Company Attendance</h1>
+            <h2>Admin Dashboard</h2>
+        </header>
+        <section class="attendance-form">
+            <form id="attendanceForm">
+                <div class="input-group">
+                    <label for="date">Date:</label>
+                    <input type="date" id="date" required>
+                </div>
+                <div class="input-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" placeholder="Full Name" required>
+                </div>
+                <div class="input-group">
+                    <label for="user-id">User ID:</label>
+                    <input type="text" id="user-id" placeholder="User ID" required>
+                </div>
+                <div class="input-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" placeholder="Username" required>
+                </div>
+                <div class="input-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" placeholder="Email" required>
+                </div>
+                <div class="input-group">
+                    <label for="time-in">Time In:</label>
+                    <input type="time" id="time-in" required>
+                </div>
+                <div class="input-group">
+                    <label for="time-out">Time Out:</label>
+                    <input type="time" id="time-out" required>
+                </div>
+                <button type="submit">Submit</button>
+            </form>
+        </section>
+        <section class="attendance-record">
+            <h3>Attendance Records</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Name</th>
+                        <th>User ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Time In</th>
+                        <th>Time Out</th>
+                    </tr>
+                </thead>
+                <tbody id="attendanceRecords">
+                    <!-- Attendance records will be dynamically added here -->
+                </tbody>
+            </table>
+        </section>
+    </div>
+    
+    <!-- Firebase Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-database.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyAj1nHx7jynYiSH34M-BsYKJbDyN_0tkEg",
+            authDomain: "stacks-517bd.firebaseapp.com",
+            databaseURL: "https://stacks-517bd-default-rtdb.firebaseio.com",
+            projectId: "stacks-517bd",
+            storageBucket: "stacks-517bd.appspot.com",
+            messagingSenderId: "717430442156",
+            appId: "1:717430442156:web:d5febb867d4d783c65b709",
+            measurementId: "G-8WJZWSPEWW"
+        };
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        
+        // Form Submission Handler
+        document.getElementById("attendanceForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+        
+            const date = document.getElementById("date").value;
+            const name = document.getElementById("name").value;
+            const userId = document.getElementById("user-id").value;
+            const username = document.getElementById("username").value;
+            const email = document.getElementById("email").value;
+            const timeIn = document.getElementById("time-in").value;
+            const timeOut = document.getElementById("time-out").value;
+        
+            // Add attendance record to the database
+            const attendanceRef = ref(db, `Attendance/${userId}/${date}`);
+            await set(attendanceRef, {
+                Name: name,
+                UserID: userId,
+                Username: username,
+                Email: email,
+                Date: date,
+                TimeIn: timeIn,
+                TimeOut: timeOut
+            });
+        
+            // Create a new table row
+            const newRow = document.createElement("tr");
+            newRow.innerHTML = `
+                <td>${date}</td>
+                <td>${name}</td>
+                <td>${userId}</td>
+                <td>${username}</td>
+                <td>${email}</td>
+                <td>${timeIn}</td>
+                <td>${timeOut}</td>
+            `;
+            document.getElementById("attendanceRecords").appendChild(newRow);
+        
+            // Reset the form
+            this.reset();
+        
+            alert("Attendance recorded successfully!");
+        });
+        
+        // Menu Button Toggle Handler
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuBtn = document.getElementById('menuBtn');
+            const sidebar = document.getElementById('sidebar');
+        
+            menuBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+            });
+        });
+    </script>
+</body>
+</html>
